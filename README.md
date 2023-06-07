@@ -16,11 +16,11 @@ AMK  Website Called Tab-Switch
   2- .NET6 runtime<br />
   3- Install Visual Studio<br />
   4- Migration:<br />
-    4.1- Add-Migrations Init1<br />
-    4.2- Update-Database<br />
+    &ensp;4.1- Add-Migrations Init1<br />
+    &ensp;4.2- Update-Database<br />
   5- Go to path /user-entry<br />
   6- Click button user entry<br />
   7- Login with your ADUser : <br />
-    7.1- UserName: CBS.Test<br />
-    7.2- Password: AMk@22099<br />
+    &ensp;7.1- UserName: CBS.Test<br />
+    &ensp;7.2- Password: AMk@22099<br />
   
