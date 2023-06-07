@@ -1,0 +1,88 @@
+﻿@using System.Reflection;
+@using TableSwitchWebApplication.Shared.Components;
+@typeparam T;
+ <Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(1)" > @*Animation*@
+<table>
+    <thead>
+        <tr>
+            @foreach (var prop in typeof(T).GetProperties())
+            {
+                <th>@prop.Name</th> //Get All Property Define in Model Class
+            }
+            @if (action)
+            {
+                <th>Action</th> // View Edit and Remove Data Source
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Body is null || Body.Count()==0)
+        {
+            <tr>Data Not Available</tr> // Data Source null or  Lenght Zero
+        }
+        else
+        {
+            @foreach (var body in Body!)
+            {
+                <tr>
+                    @foreach (var prop in typeof(T).GetProperties())
+                    {
+                        <td>@prop.GetValue(body)</td> // Display row from each data source
+                    }
+                    @if (action) //Action Each Rows
+                    {
+                        <td>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="()=>OnView(body)">View</button>
+                                <button type="button" class="btn btn-outline-warning btn-sm">Edit</button>
+                                <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
+                            </div>
+                        </td>
+                    }     
+                </tr>
+            }
+        }
+        
+    </tbody>
+</table>
+</Animate>
+@*View*@
+<DialogComponent Title="View Loan" IsOpen="@dialogIsOpen" IsOpenChanged="DialogIsOpenChanged">
+    <p>This is a sample dialog content.</p>
+</DialogComponent>
+
+@code {
+    private bool dialogIsOpen = false;
+
+    private void OpenDialog()
+    {
+        dialogIsOpen = true;
+    }
+
+    private void DialogIsOpenChanged(bool isOpen)
+    {
+        dialogIsOpen = isOpen;
+    }
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<T>? Body { get; set; } //Data Source
+    [Parameter]
+    public bool action { get; set; } // If false => No Action
+    private const string columnName = "Id"; // Primary Key that work with Server
+
+    private string GetColumnValue(T t) //Get Column Value From User clicked on Template
+    {
+        Type type = t.GetType();
+        PropertyInfo propInfo = type!.GetProperty(columnName)!;
+        string value = propInfo!.GetValue(t, null)!.ToString()!;
+        return value; // return the value of ColumnName 
+    }
+    private void OnView(T t)
+    {
+        var key=GetColumnValue(t);
+        OpenDialog();
+    }
+}
+

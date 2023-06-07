@@ -1,0 +1,123 @@
+﻿@page "/no-hit"
+@using TableSwitchWebApplication.Data.Setting;
+@using TableSwitchWebApplication.Models.Settings.LoadReview;
+@using TableSwitchWebApplication.Shared.Components;
+@inherits LoanReviewListBase;
+
+@if(T24_AMLCusGets is not null)
+{
+    foreach (var T24_AMLCusGet in T24_AMLCusGets)
+    {
+        <RadzenCard class="mb-2">
+            <div class="alert alert-primary" role="alert">
+                @if (T24_AMLCusGet.LoanAppPersonType == "bo")
+                {
+                    <h6>អតិថិជន</h6>
+                }
+                else if (T24_AMLCusGet.LoanAppPersonType == "cobo")
+                {
+                    <h6>ព័ត៌មានអ្នករួមខ្ចី</h6>
+                }
+                else
+                {
+                    <h6>ព័ត៌មានអ្នកធានា​​ និង អ្នករួមធានា</h6>
+                }
+            </div>
+            <RadzenCard class="rz-shadow-0 rz-border-radius-2 rz-p-4 rz-mt-0 alert alert-primary" Style="background-color:#A53C6F">
+
+                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light font-kh"><strong> @T24_AMLCusGet.FullNameEn | @T24_AMLCusGet.FullNameKh</strong></RadzenText>
+                <RadzenRow RowGap="0">
+
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">ភេទ</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.Gender</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            ថ្ងៃខែឆ្នាំកំណើត
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.DateOfBirth</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            លេខទូរស័ព្ទ
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.TelePhone3</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            ប្រភេទប័ណ្ណ
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.Description</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            លេខប័ណ្ណ
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.IDNumber</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            ឈ្មោះធនាគារភូមិ
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.VBName</b></RadzenText>
+                    </RadzenColumn>
+
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0 font-kh">
+                            ស្ថានភាពគ្រួសារ
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.MaritalStatusID</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">
+                            Block Status
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.BlockStatus</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">
+                            Watch-list Screening
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.WatchListScreeningStatus</b></RadzenText>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="2">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">
+                            Risk Profiling
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b class="font-kh">@T24_AMLCusGet.RiskProfiling</b></RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
+                    <RadzenButton Size="ButtonSize.Medium" Text="@T24_AMLCusGet.CustomerID" ButtonStyle="ButtonStyle.Primary"
+                          Click=@(arg=> OpenDialogCustomerDetail(T24_AMLCusGet.LoanAppID!,T24_AMLCusGet.LoanAppPersonID!)) />
+                </RadzenStack>
+            </RadzenCard>
+
+        </RadzenCard>
+
+    }
+}
+@if (CustomerDetailModels is not null)
+{
+    <DialogComponent Title="ព័ត៌មានលំអិត" IsOpen="@dialogIsOpenCustomerDetail" IsOpenChanged="DialogIsOpenChangedCustomerDetail" Size="modal-lg">
+        <CustomerDetailPage Customers="CustomerDetailModels" />
+    </DialogComponent>
+}
+
+
+
+<style>
+    .font-kh {
+        font-family: 'Khmer OS'
+    }
+  
+</style>
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter] public ICollection<T24_AMLCusGetModel>? T24_AMLCusGets { get; set; }
+
+}

@@ -1,0 +1,14 @@
+﻿<div>
+    <label>@Title</label>
+    <br />
+    <RadzenDatePicker @bind-Value=@Value DateFormat="MM/dd/yyyy" />
+</div>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public DateTime? Value { get; set; }
+
+
+}

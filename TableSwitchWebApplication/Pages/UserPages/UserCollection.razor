@@ -1,0 +1,37 @@
+﻿@page "/user/usercollection"
+@using System.Reflection;
+@using TableSwitchWebApplication.BusineseLogics;
+@using TableSwitchWebApplication.Models;
+@using TableSwitchWebApplication.Shared.Components;
+@inject IBusineseLogic _logic;
+
+<PageTitle>Users Collection</PageTitle>
+<TitlePageComponent Title="@title.ToUpper()"></TitlePageComponent>
+
+@if (users is null)
+{
+    <LoadingComponent></LoadingComponent>
+}
+else
+{
+    <AuthorizeView Roles="Administrator">
+        <Authorized>
+            <DataTableComponent Body="users" action=true T="UserModel"></DataTableComponent>
+        </Authorized>
+        <NotAuthorized>
+            <PermissionComponent Title="This Content Require Administrator..." />
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+
+
+@code {
+    private string title = "list of users";
+    private IEnumerable<UserModel>? users;
+    private List<string> headers = new();
+    protected override async Task OnInitializedAsync()
+    {
+        users = await _logic.GetAllUserAsync();
+    }
+}

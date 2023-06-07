@@ -1,0 +1,93 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href=""> 
+            <RadzenImage class="rz-gravatar" Path="images/logo.jpg"></RadzenImage> AMK Tab-Switch
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        @*Date: 2023-05-22; Developer: PUN MENGLY; Module: Home*@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        @*Date: 2023-05-22; Developer: PUN MENGLY; Module: Office*@
+        <AuthorizeView Roles="Admin">
+        <div class="nav-item px-3">
+                <NavLink class="nav-link" href="office">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Offices
+            </NavLink>
+        </div>
+        </AuthorizeView>
+        @*Date: 2023-05-22; Developer: PUN MENGLY; Module: User*@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="user" @onclick="()=>expandSubMenUser= !expandSubMenUser">
+                <span class="oi oi-people" aria-hidden="true"></span> User
+            </NavLink>
+            @if (expandSubMenUser)
+            {
+                <Animate Animation="Animations.FadeIn" Duration="TimeSpan.FromSeconds(0.5)">
+                    <ul class="nav flex-column">
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="user/usercollection">
+                                <span class="oi oi-file" aria-hidden="true"></span> User Collection
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="switchuser">
+                                <span class="oi oi-bar-chart" aria-hidden="true"></span> Switch User
+                            </NavLink>
+                        </li>
+                    </ul>
+                </Animate>
+            }
+        </div>
+        @*Date: 2023-05-22; Developer: PUN MENGLY; Module: Setting*@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="setting" @onclick="()=>expandSubMenuSetting= !expandSubMenuSetting">
+                <span class="oi oi-wrench" aria-hidden="true"></span> Setting
+            </NavLink>
+            @if (expandSubMenuSetting)
+            {
+                <Animate Animation="Animations.FadeIn" Duration="TimeSpan.FromSeconds(0.5)">
+                    <ul class="nav flex-column">
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="setting/loanreview">
+                                <span class="oi oi-file" aria-hidden="true"></span> Loan Review
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="other">
+                                <span class="oi oi-bar-chart" aria-hidden="true"></span> Other
+                            </NavLink>
+                        </li>
+                    </ul>
+                </Animate>
+            }
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private List<bool> exspandMenu = new List<bool>()
+    {
+
+    };
+    private bool expandSubMenuSetting = false;
+    private bool expandSubMenUser = false;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+}

@@ -1,0 +1,36 @@
+﻿
+
+<div class="modal" tabindex="-1" style="@(IsOpen ? "display: block;background-color: rgba(0, 0, 0, 0.5);" : "display: none;")">
+    <div class="modal-dialog @Size modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" @onclick="CloseDialog"></button>
+            </div>
+            <div class="modal-body" style="overflow: auto;">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool IsOpen { get; set; }
+
+    [Parameter] public string? Size { get; set; }
+
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+
+    private async Task CloseDialog()
+    {
+
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(IsOpen);
+
+    }
+}

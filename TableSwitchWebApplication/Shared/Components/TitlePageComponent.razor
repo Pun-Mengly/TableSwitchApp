@@ -1,0 +1,9 @@
+﻿ <Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(0.5)" >
+<div class="alert alert-primary" role="alert">
+    <h4>@Title</h4>
+</div>
+</Animate>
+@code{
+    [Parameter]
+    public string? Title { get; set; }
+}

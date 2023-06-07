@@ -1,0 +1,222 @@
+﻿@page "/setting/loanreview";
+@inherits LoanReviewListBase;
+@using TableSwitchWebApplication.BusineseLogics;
+@using TableSwitchWebApplication.Data.Setting;
+@using TableSwitchWebApplication.Helper;
+@using TableSwitchWebApplication.Models.Settings.LoadReview.LoadReview;
+@using TableSwitchWebApplication.Models.Settings.LoadReview;
+@inject DialogService DialogService
+
+
+
+<TitlePageComponent Title="@title.ToUpper()"></TitlePageComponent>
+
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(1)" >
+<div class="d-grid gap-2 d-md-flex justify-content-md-start">
+@*   <DateComponent Value="@fromdate" Title="From Date:"></DateComponent>
+    <DateComponent Value="@todate" Title="To Date:"></DateComponent>*@
+        <div>
+            <label>From Date:</label>
+            <br />
+            <RadzenDatePicker @bind-Value=@fromdate DateFormat="MM/dd/yyyy" />
+        </div>
+        <div>
+            <label>To Date:</label>
+            <br />
+            <RadzenDatePicker @bind-Value=@todate DateFormat="MM/dd/yyyy" />
+        </div>
+    <div>
+        @if(co is not null)
+        {
+            <label>CO:</label>
+            <br />
+            <div><RadzenDropDown TValue="string" Data=@co!.Select(e=>e.Text)
+                            Change=@(args => OnChangeCO(args))
+                            AllowFiltering=true
+                            Placeholder="Text.." /></div>
+        }
+    </div>
+    <div>
+        <div></div>
+        <br />
+            <RadzenButton Variant="Variant.Outlined" Text="Search" Icon="autorenew" ButtonStyle="ButtonStyle.Primary"
+                          Click=@(args => ShowBusyDialog(true)) />
+    </div>
+</div>
+</Animate>
+
+@if (loans is not null)
+{
+    <Animate Animation="Animations.FadeIn" Duration="TimeSpan.FromSeconds(0.5)">
+        <RadzenDataGrid PageSize="10" AllowPaging="true" 
+            Data="@loans" TItem="LoanReviewModel"
+            AllowColumnResize="true"
+            AllowFiltering="true"
+            AllowSorting="true"
+            AllowColumnPicking="true"
+            style="--rz-grid-header-background-color: #A53C6F;--rz-grid-header-color: white;"
+            class="p-2 mt-3">
+            <Columns>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="GroupNumber" Title="Group" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="BranchName" Title="BranchName" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel"  Property="COName" Title="COName" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="LoanAMKDL" Title="LoanAMKDL" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Property="LoanProduct" Title="LoanProduct" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Property="LoanCurrency" Title="LoanCurrency" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Property="LoanAmount" Title="LoanAmount" Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="CustomerId" Title="CustomerId" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Property="FullNameKH" Title="FullNameKH" Sortable=false Filterable=false />
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="EasySavingAccount" Title="EasySavingACC" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        <a href="google.com">@data.EasySavingAccount</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Property="CBCReferenceId" Title="CBCReferenceId" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        <a href="google.com">@data.CBCReferenceId</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Title="WLScreenResult" Sortable=false Filterable=false>
+                    
+                    <Template Context="data">
+                        @if(data.Id is not null)
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall"
+                                  ButtonStyle="ButtonStyle.Success" Text="NO HIT" Click=@(arg=> OpenDialogNoHit(data.Id!)) />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Title="CustomerGrade'" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        @if (data.CustomerGrand == "Good")
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Primary" Disabled>@data.CustomerGrand</RadzenButton>
+                        }
+                        else
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Danger" Disabled>@data.CustomerGrand</RadzenButton>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Title="PreCheck" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        @if (data.PreCheck == "Reviewed")
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Success">@data.PreCheck</RadzenButton>
+                        }
+                        else
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Primary">@data.PreCheck</RadzenButton>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false"  Title="DeskCheck" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        @if (data.DeskCheck == "Reviewed")
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Success">@data.DeskCheck</RadzenButton>
+                        }
+                        else
+                        {
+                            <RadzenButton Variant="Variant.Outlined" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Primary">@data.DeskCheck</RadzenButton>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Title="AppForm" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        <RadzenButton Variant="Variant.Outlined" Click=@(args => AppFormAction("AppForm Action")) Icon="get_app" ButtonStyle="ButtonStyle.Primary"
+                                  Size="ButtonSize.ExtraSmall" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Visible="false" Title="Edit" Sortable=false Filterable=false>
+                    <Template Context="data">
+                        <RadzenButton Variant="Variant.Outlined" Click=@(args => AppFormAction("AppForm Action")) Icon="edit" ButtonStyle="ButtonStyle.Primary"
+                                  Size="ButtonSize.ExtraSmall" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="LoanReviewModel" Property="Approve" Title="Approve" Sortable=false />
+                
+            </Columns>
+        </RadzenDataGrid>
+    </Animate>
+}
+
+@if(T24_AMLCusGetModels is not null)
+{
+    <DialogComponent Title="Customer AML Information" IsOpen="@dialogIsOpenNoHit" IsOpenChanged="DialogIsOpenChangedNoHit" Size="modal-xl">
+        <NoHitPage T24_AMLCusGets="T24_AMLCusGetModels"></NoHitPage>
+    </DialogComponent>
+}
+
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        var currentuser = await _logic!.GetCurrentUserAsync();
+        if (currentuser is not null)
+        {
+            GlobalData.UserId = currentuser.UserID!;
+        }
+        allDropdown = await _logic!.GetAllDropDownLoanReviewAsync(1);
+        co = allDropdown!.LoanReviewCOModels!;
+    }
+    async Task ShowBusyDialog(bool withMessageAsString)
+    {
+        #pragma warning disable CS4014
+        InvokeAsync(async () =>
+        {
+            // Simulate background task
+            await Task.Run(() => btnSearch());
+
+            // Close the dialog
+            DialogService.Close();
+        });
+
+        if (withMessageAsString)
+        {
+            await BusyDialog("Loading, Please Wait...");
+        }
+        else
+        {
+            await BusyDialog();
+        }
+    }
+
+    // Busy dialog from markup
+    async Task BusyDialog()
+    {
+        await DialogService.OpenAsync("", ds =>
+        @<LoadingComponent></LoadingComponent>
+        , new DialogOptions()
+        {
+            ShowTitle = false,
+            Style = "min - height:auto; min - width:auto; width: auto",
+            CloseDialogOnEsc = false,
+        });
+    }
+
+    // Busy dialog from string
+    async Task BusyDialog(string message)
+    {
+        await DialogService.OpenAsync("", ds =>
+        {
+            RenderFragment content = b =>
+            {
+                b.OpenElement(0, "RadzenRow");
+
+                b.OpenElement(1, "RadzenColumn");
+                b.AddAttribute(2, "Size", "12");
+                b.AddContent(3, message);
+
+                b.CloseElement();
+                b.CloseElement();
+            };
+            return content;
+        }, new DialogOptions() { 
+            ShowTitle = false,
+            Style = "min-height:auto;min-width:auto;width:auto",
+            CloseDialogOnEsc = false ,
+            
+        });
+    }
+}

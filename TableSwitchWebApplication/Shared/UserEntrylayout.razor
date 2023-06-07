@@ -1,0 +1,62 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using Serilog;
+@using TableSwitchWebApplication.BusineseLogics;
+@using TableSwitchWebApplication.Data;
+@using TableSwitchWebApplication.Data.ChatGPT;
+@using TableSwitchWebApplication.HangFireTask;
+@using TableSwitchWebApplication.Models.UserAd;
+@inject IBusineseLogic _logic;
+@inject SignInManager<ApplicationUser> _signInManager;
+@inject UserManager<ApplicationUser> _userManager;
+@inject RoleManager<IdentityRole> _roleManager;
+
+<div class="container-fluid pt-3">
+    <TitlePageComponent Title="Users Entry"></TitlePageComponent>
+    <RadzenButton Text="User Entry" Click="@UserEntry" Style="float:right"></RadzenButton>
+
+</div>
+    <RadzenButton Text="Chat GPT" Click="@Message" Style="float:right"></RadzenButton>
+
+@code {
+    public IEnumerable<ADUserModel>? Users { get; set; }
+    const string passsword = "Amk@123"; // Fix Password
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await _logic!.GetADUsersAsync();
+
+    }
+    private async Task UserEntry()
+    {
+        try
+        {
+            foreach (var user in Users!)
+            {
+                var role = new IdentityRole(user.GroupName);
+                var addRoleResult = await _roleManager.CreateAsync(role);
+                var identity = new ApplicationUser { UserName = user.ADUser, Email = user.Email, UserID = user.UserID };
+                var result = await _userManager.CreateAsync(identity, passsword);
+                if (!result.Succeeded)
+                {
+                    var userQuery = await _userManager!.Users!.Where(e => e.UserName == user.ADUser).FirstOrDefaultAsync();
+                    var addUserRoleResult = await _userManager.AddToRoleAsync(userQuery, user.GroupName); //Exciting user
+                }
+                else
+                {
+                    var addUserRoleResult = await _userManager.AddToRoleAsync(identity, user.GroupName); // New User
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+    private async Task Message()
+    {
+        ChatGPT gpt = new();
+        var response= await gpt.SendRequestToChatGPTApi("What is it today?");
+    }
+}
+

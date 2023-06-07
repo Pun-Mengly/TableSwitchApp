@@ -1,0 +1,132 @@
+﻿@page "/customer"
+@using TableSwitchWebApplication.Models.Settings.LoadReview;
+<RadzenCard class="m-1">
+    <RadzenCard class="p-2">
+        <RadzenRow class="rz-text-align-center " Gap="0.5rem" RowGap="0.5rem">
+            <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-border-radius-4 rz-p-5">
+                <RadzenImage Path="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" Style="width: 100px; height: 100px; border-radius: 50%;" />
+
+            </RadzenColumn>
+            @if (Customers!.t24_AMLDetailGet!.FirstOrDefault()!.isCheck == "0")
+            {
+                <RadzenTextBox Value="ផ្ទៀងផ្ទាត់​ KYC មិនជោគជ័យ" Disabled Style="color: red" />
+            }
+            else
+            {
+                <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-p-5 color-value rz-border-radius-4 ">
+                    <RadzenText class="font-kh">
+                        ពិន្ទុនៃព័ត៌មានអតិថិជន:
+                        <strong Style="color: #A53C6F">@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.UserScore) </strong>
+                    </RadzenText>
+                    <RadzenText class="font-kh mt-2">
+                        ពិន្ទុនៃមុខអតិថិជន:
+                        <strong Style="color: #A53C6F">@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.faceMoiScore) </strong>
+                    </RadzenText>
+                    <RadzenText class="font-kh mt-2">
+                        ពិន្ទុនៃមុខក្នុងឯកសារប័ណ:
+                        <strong Style="color: #A53C6F">@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.faceDocumentScore) </strong>
+                    </RadzenText>
+                    <RadzenText class="font-kh mt-2">
+                        ព័ត៌មានមិនត្រឹមត្រូវ:
+                        <strong Style="color: #A53C6F">@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.jsonDifference) </strong>
+                    </RadzenText>
+                </RadzenColumn>
+            }
+        </RadzenRow>
+       
+    </RadzenCard>
+    <RadzenCard class="p-2 mt-2">
+        <div class="alert alert-primary" role="alert">
+            <h6>
+                ព័ត៌មានអតិថិជន
+            </h6>
+        </div>
+        <RadzenFormField Text="CID" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.CustomerID)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+            <RadzenFormField Text="Title" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.Title)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="ឈ្មោះជាភាសាខ្មែរ | Khmer Name" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.FullNameKh)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="ឈ្មោះឈ្មោះជាឡាតាំង | Latan Name" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.FullNameEn)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="ភេទ | Gender" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.Gender)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="លេខទូរស័ព្ | Phone Number" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.Telephone3)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="សញ្ជាតិ | Nationality" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.Nationality)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="ប្រភេទមុខរបរ | Occupation Type" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextArea Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.OccupationType)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="មុខរបរលំអិត | Occupation Detail" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextArea Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.OccupationDetail)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+        <RadzenFormField Text="ថ្ងៃខែឆ្នាំកំណើត | DOB" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+            <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.DateOfBirth)" Disabled Style="color: #A53C6F" />
+        </RadzenFormField>
+     </RadzenCard>
+     <RadzenCard class="p-2 mt-2">
+            <div class="alert alert-primary" role="alert">
+                <h6>ព័ត៌មានលំអិតឯកសារប័ណ្ណ</h6>
+            </div>
+        <RadzenCard>
+            <RadzenRow class="rz-text-align-center " Gap="0.5rem" RowGap="0.5rem">
+                <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-p-5 color-value rz-border-radius-4 ">
+                    @(Customers!.t24_AMLCusKYCGet!.FirstOrDefault()!.IDNumber)
+                </RadzenColumn>
+                <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-border-radius-4 rz-p-5">
+                    Issue Date:  @(Customers!.t24_AMLCusKYCGet!.FirstOrDefault()!.IDIssueDate)
+                </RadzenColumn>
+                <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-border-radius-4 rz-p-5">
+                    ID Type:  @(Customers!.t24_AMLCusKYCGet!.FirstOrDefault()!.IDTYPE)
+                </RadzenColumn>
+                <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-border-radius-4 rz-p-5">
+                    Expiry Date:  @(Customers!.t24_AMLCusKYCGet!.FirstOrDefault()!.IDExpireDate)
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+     </RadzenCard>
+     <RadzenCard class="p-2 mt-2">
+        <div class="alert alert-primary" role="alert">
+                <h6>ព័ត៌មានលំអិត AML</h6>
+        </div>
+        <RadzenCard>
+            <RadzenFormField Text="Block Status" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+                <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.BlockStatus)" Disabled Style="color: #A53C6F" />
+            </RadzenFormField>
+            <RadzenRow class="rz-text-align-center mt-2" Gap="1rem">
+                <RadzenColumn Size="8" class="rz-background-color-info-lighter rz-color-info rz-p-2 rz-p-md-5 rz-border-radius-4">
+                    <RadzenButton Variant="Variant.Outlined" Text="NO HIT" ButtonStyle="ButtonStyle.Success" class="w-100"></RadzenButton>
+                </RadzenColumn>
+                <RadzenColumn Size="4" class="rz-background-color-info-lighter rz-color-info rz-p-2 rz-p-md-5 rz-border-radius-4">
+                    <RadzenButton Variant="Variant.Outlined" Text="ផ្ទៀងផ្ទាត់" ButtonStyle="ButtonStyle.Primary" class="w-100"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+                <RadzenFormField Text="Watch-list Exposition" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+                <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.WatchListExposition)" Disabled Style="color: #A53C6F" />
+            </RadzenFormField>
+                <RadzenFormField Text="Risk Profiling" Variant="Variant.Outlined" class="w-100" Style="font-weight:bold">
+                <RadzenTextBox Value="@(Customers!.t24_AMLDetailGet!.FirstOrDefault()!.RiskProfiling)" Disabled Style="color: #A53C6F" />
+            </RadzenFormField>
+        </RadzenCard>
+     </RadzenCard>
+</RadzenCard>
+<style>
+    .font-kh {
+        font-family: 'Khmer OS'
+    }
+    .color-value{
+        color: #A53C6F
+    }
+</style>
+@code {
+    [Parameter]
+    public CustomerDetailModel? Customers { get; set; }
+}

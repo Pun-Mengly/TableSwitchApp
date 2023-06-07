@@ -1,0 +1,16 @@
+﻿<div class="alert alert-danger mt-4">
+    <span class="oi oi-delete me-2" aria-hidden="true"></span>
+    <strong>@Title</strong>
+
+    <span class="text-nowrap">
+        Please
+        <a class="font-weight-bold link-dark" href="Identity/Account/Login">logged in</a>
+    </span>
+    to access this page
+</div>
+
+@code {
+    // Demonstrates how a parent component can supply parameters
+    [Parameter]
+    public string? Title { get; set; }
+}
