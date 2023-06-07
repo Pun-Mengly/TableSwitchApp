@@ -1,6 +1,6 @@
 # TableSwitchApp
 AMK  Website Called Tab-Switch
-Tools such as:
+# Tools such as:
   1- Blazor Sever : Build Web SPA
   2- SQL SERVER (Locally in AMK Network) : Storing data
   3- .NET6 : Runtime 
@@ -11,7 +11,7 @@ Tools such as:
   8- Log : Serial Log to log information in text file wwwroot/logs
   9- NUnitTest : Test Logic in these functions
   10- Github : Storing source code
-To run the project:
+# To run the project:
   1- Connect to wifi staff
   2- .NET6 runtime
   3- Install Visual Studio
