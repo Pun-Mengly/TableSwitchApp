@@ -16,7 +16,7 @@ namespace TableSwitchWebApplication.Data.Setting
         public IEnumerable<UserShecduleModel>? AMShecduleModels { get; set; }
         public IEnumerable<UserShecduleModel>? CoShecduleModels { get; set; }
         public HolidayResponse? Holidays { get; set; }
-        public List<Appointment> Appointments { get; set; } = new();
+        public List<Appointment>? Appointments { get; set; } = new();
 
 
         
@@ -46,21 +46,24 @@ namespace TableSwitchWebApplication.Data.Setting
         }
         protected async Task OnSearchAsync()
         {
-            Appointments.Clear();
-            var data = await _logic!.GetPublicHolidayAsync();
+            //Appointments.Clear();
+            //var data = await _logic!.GetPublicHolidayAsync();
 
-            var publicHolidays = data.DataList!.Where(e => e.Description != "").ToList();
+            //var publicHolidays = data.DataList!.Where(e => e.Description != "").ToList();
 
-            foreach (var publicHoliday in publicHolidays)
-            {
-                var apm = new Appointment()
-                {
-                    Start = publicHoliday.HolidayDate,
-                    End = publicHoliday.HolidayDate,
-                    Text = publicHoliday.Description
-                };
-                Appointments!.Add(apm);
-            }
+            //foreach (var publicHoliday in publicHolidays)
+            //{
+            //    var apm = new Appointment()
+            //    {
+            //        PlanDateStart = publicHoliday.HolidayDate,
+            //        PlanDateEnd = publicHoliday.HolidayDate,
+            //        Title = publicHoliday.Description
+            //    };
+            //    Appointments!.Add(apm);
+            //}
+
+            Appointments= await _logic!.GetHolidayAsync("7040") as List<Appointment>; //Fixed User CO For Test
+
         }
 
     }

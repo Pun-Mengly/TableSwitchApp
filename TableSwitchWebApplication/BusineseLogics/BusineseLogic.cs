@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
+using Radzen.Blazor.Rendering;
 using RestSharp;
 using Serilog;
 using System.Data;
@@ -14,6 +15,7 @@ using TableSwitchWebApplication.Models.Settings.LoadReview;
 using TableSwitchWebApplication.Models.Settings.LoadReview.LoadReview;
 using TableSwitchWebApplication.Models.Settings.Schedule;
 using TableSwitchWebApplication.Models.UserAd;
+using Appointment = TableSwitchWebApplication.Models.Settings.Schedule.Appointment;
 
 namespace TableSwitchWebApplication.BusineseLogics
 {
@@ -537,12 +539,31 @@ namespace TableSwitchWebApplication.BusineseLogics
             }
         }
 
-        public async  Task<HolidayResponse> GetHolidayAsync(string coId)
+        public async  Task<IEnumerable<Appointment>> GetHolidayAsync(string coId)
         {
-            var jObj = new HolidayResponse();
+            var jObj = new COScheduleResponse();
+            List<Appointment> appointments = new();
+
+
             var enc = new Encryption();
             try
             {
+                var data = await GetPublicHolidayAsync();
+
+                var publicHolidays = data.DataList!.Where(e => e.Description != "").ToList();
+
+                foreach (var publicHoliday in publicHolidays)
+                {
+                    var apm = new Appointment()
+                    {
+                        PlanDateStart = publicHoliday.HolidayDate,
+                        PlanDateEnd = publicHoliday.HolidayDate,
+                        Title = publicHoliday.Description,
+                        TaskId="PublicHoliday"
+                    };
+                    appointments!.Add(apm);
+                }
+
                 var startDate = DateTime.Now.AddYears(-5).ToString("yyyy");
                 var endDate = DateTime.Now.AddYears(5).ToString("yyyy");
                 string jsonRS = "{\"UserOwnerID\":\"" + coId + "\",\"StartDate\":\"" + startDate + "\",\"EndDate\":\"" + endDate + "\"}";
@@ -560,13 +581,37 @@ namespace TableSwitchWebApplication.BusineseLogics
                 string jres = response.Content!.ToString().Replace("\"", "");
                 string jresDec = enc.Decrypt(jres, FakeSeed).TrimEnd(']').TrimStart('[');
 
-                jObj = Newtonsoft.Json.JsonConvert.DeserializeObject<HolidayResponse>(jresDec);
+                jObj = Newtonsoft.Json.JsonConvert.DeserializeObject<COScheduleResponse>(jresDec);
+
+                var schedules = jObj.DataList!.Where(e => e.Description != "").ToList();
+
+                foreach (var schedule in schedules)
+                {
+                    var apm = new Appointment()
+                    {
+                        PlanDateStart = schedule.PlanDateStart,
+                        PlanDateEnd = schedule.PlanDateEnd,
+                        Title = schedule.Title,
+                        ActualDateEnd = schedule.ActualDateEnd,
+                        ActualDateStart = schedule.ActualDateStart,
+                        CreatedDate = schedule.CreatedDate,
+                        Description = schedule.Description,
+                        OwnerUserId = schedule.OwnerUserId,
+                        OwnerUserText = schedule.OwnerUserText,
+                        Remark= schedule.Remark,
+                        TaskId = schedule.TaskId,
+                        TaskTypeId = schedule.TaskTypeId,
+                        TaskTypeStatusId= schedule.TaskTypeStatusId
+                        
+                    };
+                    appointments!.Add(apm);
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            return jObj;
+            return appointments;
         }
 
         public  async Task<HolidayResponse> GetPublicHolidayAsync()

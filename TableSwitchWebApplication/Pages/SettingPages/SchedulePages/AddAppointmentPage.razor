@@ -7,7 +7,7 @@
             <RadzenLabel Text="Text" />
         </div>
         <div class="col">
-            <RadzenTextBox @bind-Value="@model.Text" Name="Text" />
+            <RadzenTextBox @bind-Value="@model.Title" Name="Text" />
             <RadzenRequiredValidator Text="Title is required" Component="Text" />
         </div>
     </div>
@@ -16,7 +16,7 @@
             <RadzenLabel Text="Start" />
         </div>
         <div class="col">
-            <RadzenDatePicker @bind-Value="@model.Start" Name="Start" ShowTime="true" />
+            <RadzenDatePicker @bind-Value="@model.PlanDateStart" Name="Start" ShowTime="true" />
             <RadzenRequiredValidator Text="Start is required" Component="Start" />
         </div>
     </div>
@@ -25,7 +25,7 @@
             <RadzenLabel Text="End" />
         </div>
         <div class="col">
-            <RadzenDatePicker Name="End" @bind-Value="@model.End" ShowTime="true" />
+            <RadzenDatePicker Name="End" @bind-Value="@model.PlanDateEnd" ShowTime="true" />
             <RadzenRequiredValidator Component="End" Text="End is required" />
         </div>
     </div>
@@ -39,17 +39,17 @@
 
 @code {
     [Parameter]
-    public DateTime Start { get; set; }
+    public DateTime PlanDateStart { get; set; }
 
     [Parameter]
-    public DateTime End { get; set; }
+    public DateTime PlanDateEnd { get; set; }
 
     Appointment model = new Appointment();
 
     protected override void OnParametersSet()
     {
-        model.Start = Start;
-        model.End = End;
+        model.PlanDateStart = PlanDateStart;
+        model.PlanDateEnd = PlanDateEnd;
     }
 
     void OnSubmit(Appointment model)

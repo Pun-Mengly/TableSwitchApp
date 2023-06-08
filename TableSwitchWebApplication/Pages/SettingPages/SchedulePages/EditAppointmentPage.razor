@@ -7,7 +7,7 @@
         <RadzenLabel Text="Text" />
     </div>
     <div class="col">
-        <RadzenTextArea @bind-Value="@model.Text" Name="Text" Disabled Style="width:100%"/>
+        <RadzenTextArea @bind-Value="@model.Title" Name="Text" Disabled Style="width:100%"/>
         <RadzenRequiredValidator Text="Title is required" Component="Text" />
     </div>
 </div>
@@ -16,7 +16,7 @@
         <RadzenLabel Text="Start" />
     </div>
     <div class="col">
-            <RadzenDatePicker @bind-Value="@model.Start" Name="Start" ShowTime="true" Disabled Style="width:100%" />
+            <RadzenDatePicker @bind-Value="@model.PlanDateStart" Name="Start" ShowTime="true" Disabled Style="width:100%" />
         <RadzenRequiredValidator Text="Start is required" Component="Start" />
     </div>
 </div>
@@ -25,7 +25,7 @@
         <RadzenLabel Text="End" />
     </div>
     <div class="col">
-            <RadzenDatePicker Name="End" @bind-Value="@model.End" ShowTime="true" Disabled Style="width:100%" />
+            <RadzenDatePicker Name="End" @bind-Value="@model.PlanDateEnd" ShowTime="true" Disabled Style="width:100%" />
         <RadzenRequiredValidator Component="End" Text="End is required"  />
     </div>
 </div>

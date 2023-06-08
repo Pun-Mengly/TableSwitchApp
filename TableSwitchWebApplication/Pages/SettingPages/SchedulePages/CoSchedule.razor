@@ -69,8 +69,8 @@
     </div>
 </Animate>
 
-<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 698px;" TItem="Appointment" Data=@Appointments StartProperty="Start" EndProperty="End"
-                 TextProperty="Text" SelectedIndex="2"
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 698px;" TItem="Appointment" Data=@Appointments StartProperty="PlanDateStart" EndProperty="PlanDateEnd"
+                 TextProperty="Title" SelectedIndex="2"
                  class="mt-4"
                  SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
     <RadzenDayView />
@@ -112,7 +112,7 @@
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
-        
+
     }
 
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
@@ -122,7 +122,7 @@
         if (args.View.Text != "Year")
         {
             Appointment data = await DialogService.OpenAsync<AddAppointmentPage>("Add Appointment",
-                new Dictionary<string, object> { { "Start", args.Start }, { "End", args.End } });
+                new Dictionary<string, object> { { "PlanDateStart", args.Start }, { "PlanDateEnd", args.End } });
 
             if (data != null)
             {
@@ -135,7 +135,7 @@
 
     async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
     {
-        Console.WriteLine($"AppointmentSelect: Appointment={args.Data.Text}");
+        Console.WriteLine($"AppointmentSelect: Appointment={args.Data.Title}");
 
         await DialogService.OpenAsync<EditAppointmentPage>("Public Holiday", new Dictionary<string, object> { { "Appointment", args.Data }},
         new DialogOptions()
@@ -148,19 +148,21 @@
     void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Appointment> args)
     {
         // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
-        foreach (var app in Appointments)
+        foreach (var app in Appointments!)
         {
-            if (args.Data.Text == app.Text) //part public holiday
+            if (args.Data.Title == app.Title) //part public holiday
             {
                 args.Attributes["style"] = "background: red";
+            }
+            else
+            {
+                //Make other schedule has background color here....
             }
         }
         
     }
     protected override async Task OnInitializedAsync()
     {
-        //Holidays= await _logic!.GetPublicHolidayAsync();
-        //await _logic!.GetHolidayAsync("7040"); //Fixed User CO For Test
         PMShecduleModels= await _logic!.GetPMByRoleAsync();
     }
     async Task ShowBusyDialog(bool withMessageAsString)

@@ -21,7 +21,7 @@ namespace TableSwitchWebApplication.BusineseLogics
         public Task<IEnumerable<UserShecduleModel>> GetBMByRoleAsync(string subUserId);
         public Task<IEnumerable<UserShecduleModel>> GetAMByRoleAsync(string subUserId);
         public Task<IEnumerable<UserShecduleModel>> GetCOByRoleAsync(string subUserId);
-        public Task<HolidayResponse> GetHolidayAsync(string coId);
+        public Task<IEnumerable<Appointment>> GetHolidayAsync(string coId);
         public Task<HolidayResponse> GetPublicHolidayAsync();
 
     }
