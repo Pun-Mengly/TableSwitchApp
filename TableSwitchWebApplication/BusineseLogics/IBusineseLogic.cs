@@ -1,6 +1,7 @@
 ﻿using TableSwitchWebApplication.Data;
 using TableSwitchWebApplication.Models;
 using TableSwitchWebApplication.Models.Settings.LoadReview;
+using TableSwitchWebApplication.Models.Settings.Schedule;
 using TableSwitchWebApplication.Models.UserAd;
 
 namespace TableSwitchWebApplication.BusineseLogics
@@ -16,6 +17,12 @@ namespace TableSwitchWebApplication.BusineseLogics
         public Task<IEnumerable<ADUserModel>> GetADUsersAsync();
         public Task<string[]> CallADAuthenticationAsync(SSOModelRequest ssoRequest);
         public Task<ApplicationUser> GetCurrentUserAsync();
+        public Task<IEnumerable<UserShecduleModel>> GetPMByRoleAsync();
+        public Task<IEnumerable<UserShecduleModel>> GetBMByRoleAsync(string subUserId);
+        public Task<IEnumerable<UserShecduleModel>> GetAMByRoleAsync(string subUserId);
+        public Task<IEnumerable<UserShecduleModel>> GetCOByRoleAsync(string subUserId);
+        public Task<HolidayResponse> GetHolidayAsync(string coId);
+        public Task<HolidayResponse> GetPublicHolidayAsync();
 
     }
 }

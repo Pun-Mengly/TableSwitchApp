@@ -18,16 +18,13 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IBusineseLogic _logic;
-        private readonly IJSRuntime _jsRuntime;
         public LoginModel(SignInManager<ApplicationUser> signInManager, 
             UserManager<ApplicationUser> userManager, 
-            IBusineseLogic logic,
-            IJSRuntime jsRuntime)
+            IBusineseLogic logic)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logic = logic;
-            _jsRuntime = jsRuntime;
         }
         [BindProperty]
         public InputModel Input { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using RestSharp;
+using Serilog;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -11,6 +12,7 @@ using TableSwitchWebApplication.Helper;
 using TableSwitchWebApplication.Models;
 using TableSwitchWebApplication.Models.Settings.LoadReview;
 using TableSwitchWebApplication.Models.Settings.LoadReview.LoadReview;
+using TableSwitchWebApplication.Models.Settings.Schedule;
 using TableSwitchWebApplication.Models.UserAd;
 
 namespace TableSwitchWebApplication.BusineseLogics
@@ -18,17 +20,16 @@ namespace TableSwitchWebApplication.BusineseLogics
     public class BusineseLogic : IBusineseLogic
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly NavigationManager _navigationManager;
+        private readonly IAdoOperation _ado;
         public BusineseLogic(UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor,
-            NavigationManager navigationManager)
+            NavigationManager navigationManager,
+            IAdoOperation ado)
         {
 
             _userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
-            _navigationManager= navigationManager;
-
+            _navigationManager = navigationManager;
+            _ado = ado;
         }
         public BusineseLogic()
         {
@@ -44,7 +45,7 @@ namespace TableSwitchWebApplication.BusineseLogics
                 sql += "EXEC T24_GetLookUpByDevice @UserID='" + userId + "',@criteriaValue='DisAgreeReason'";
                 sql += "SELECT [LOOKUPID],[DESCRIPTION_KH] FROM [T24_LookUp]  where criteriaValue = 'RejectReason' and LOOKUPID in ('R1','R2','R3','R4','R5','R6','R7','R8')";
                 sql += "EXEC T24_COForLoanReviewDDLGet @UserID='" + userId + "'";
-                var ds = await AdoOperation.ReturnDT2_DATASET(sql);
+                var ds = await _ado.ReturnDT2_DATASET(sql);
                 var dt_0 = ds.Tables[0];
           
                 var dt_1 = ds.Tables[1];
@@ -81,7 +82,7 @@ namespace TableSwitchWebApplication.BusineseLogics
                 string sql = $"exec T24_LoanReviewListGet_V2 @UserID='{userId}',@DateFrom='{fromdate}',@DateTo='{toDate}',@COUserID='{CoId}'";
                 //string sql = "exec T24_LoanReviewListGet_V2 @UserID='1',@DateFrom='01-Jan-22 12:00:00 AM',@DateTo='23-May-23 9:54:55 AM',@COUserID='245'";
                 DataTable dt = new DataTable();
-                dt = await AdoOperation.ReturnDT1(sql);
+                dt = await _ado.ReturnDT1(sql);
                 foreach (DataRow row in dt.Rows)
                 {
                     LoanReviewModel loan = new LoanReviewModel()
@@ -116,7 +117,7 @@ namespace TableSwitchWebApplication.BusineseLogics
             {
                 var result=new List<T24_AMLCusGetModel>();
                 string query = $"exec T24_AMLCusGet @LoanAppID='{loanAppID}'";
-                var dataSource = await AdoOperation.ReturnDT1(query);
+                var dataSource = await _ado.ReturnDT1(query);
                 foreach (DataRow row in dataSource.Rows)
                 {
                     string? dateString = row["DateOfBirth"].ToString();
@@ -163,7 +164,7 @@ namespace TableSwitchWebApplication.BusineseLogics
                 sql += "exec T24_AMLCusKYCGet @LoanAppID='" + loanAppID + "',@LoanAppPersonID='" + loanAppPersonID + "'"; //2nd query
                 sql += "exec person_img_list '" + loanAppID + "','" + loanAppPersonID + "'"; //3th query
 
-                var ds = await AdoOperation.ReturnDT2_DATASET(sql);
+                var ds = await _ado.ReturnDT2_DATASET(sql);
                 #region T24_AMLDetailGet
                 var dt = ds.Tables[0];
                 foreach (DataRow item in dt.Rows)
@@ -263,7 +264,7 @@ namespace TableSwitchWebApplication.BusineseLogics
         public async Task<IEnumerable<UserModel>> GetAllUserAsync()
         {
             List<UserModel> users = new List<UserModel>();
-            var dataTable = await AdoOperation.ReturnDT1("select *from tblUserDec where ADUser is not null");
+            var dataTable = await _ado.ReturnDT1("select *from tblUserDec where ADUser is not null");
 
             foreach (DataRow row in dataTable.Rows)
             {
@@ -323,7 +324,7 @@ namespace TableSwitchWebApplication.BusineseLogics
             {
                 var result = new List<ADUserModel>();
                 string sql = $"EXEC LoginWithADUsers";
-                var dt = await AdoOperation.ReturnDT1(sql);
+                var dt = await _ado.ReturnDT1(sql);
                 foreach (DataRow row in dt.Rows)
                 {
                     var loginADUser = new ADUserModel()
@@ -401,7 +402,7 @@ namespace TableSwitchWebApplication.BusineseLogics
             {
                 var result = new List<AuthHangFireFilterModel>();
                 string sql = $"EXEC AuthHangFireFilter @UserAD = '{UserAD}'";
-                var dt = await AdoOperation.ReturnDT1(sql);
+                var dt = await _ado.ReturnDT1(sql);
                 foreach (DataRow row in dt.Rows)
                 {
                     var loginADUser = new AuthHangFireFilterModel()
@@ -420,7 +421,189 @@ namespace TableSwitchWebApplication.BusineseLogics
                 throw new Exception(ex.Message);
             }
         }
+
+
         #endregion
+
+        #region Schedule CO
+        public async Task<IEnumerable<UserShecduleModel>> GetPMByRoleAsync()
+        {
+            try
+            {
+                List<UserShecduleModel> result = new();
+                DataTable dt = await _ado.ExecuteStoreAsync("T24_PM_By_Role_V2", "@UserID", $"1");
+                //DataTable dt = await _ado.ExecuteStoreAsync("T24_PM_By_Role_V2", "@UserID", $"{GlobalData.UserId}");
+                foreach (DataRow row in dt.Rows)
+                {
+                    UserShecduleModel user = new UserShecduleModel()
+                    {
+                        NodeId = row["NodeId"].ToString(),
+                        ParentId = row["ParentId"].ToString(),
+                        GroupId = row["GroupID"].ToString(),
+                        NodeText = row["NodeText"].ToString(),
+                        Position = row["position"].ToString(),
+                    };
+                    result.Add(user);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail Execute 'GetPMByRoleAsync' method");
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<UserShecduleModel>> GetBMByRoleAsync(string subUserId)
+        {
+            try
+            {
+                List<UserShecduleModel> result = new();
+                DataTable dt = await _ado.ExecuteStoreAsync("T24_BM_By_Role_V2", "@UserID~@PM", $"1~{subUserId}");
+                //DataTable dt = await _ado.ExecuteStoreAsync("T24_PM_By_Role_V2", "@UserID", $"{GlobalData.UserId}");
+                foreach (DataRow row in dt.Rows)
+                {
+                    UserShecduleModel user = new UserShecduleModel()
+                    {
+                        NodeId = row["NodeId"].ToString(),
+                        ParentId = row["ParentId"].ToString(),
+                        GroupId = row["GroupID"].ToString(),
+                        NodeText = row["NodeText"].ToString(),
+                        Position = row["position"].ToString(),
+                    };
+                    result.Add(user);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail Execute 'GetBMByRoleAsync' method");
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<UserShecduleModel>> GetAMByRoleAsync(string subUserId)
+        {
+            try
+            {
+                List<UserShecduleModel> result = new();
+                DataTable dt = await _ado.ExecuteStoreAsync("T24_AM_By_Role", "@UserID~@BM", $"1~{subUserId}");
+                //DataTable dt = await _ado.ExecuteStoreAsync("T24_PM_By_Role_V2", "@UserID", $"{GlobalData.UserId}");
+                foreach (DataRow row in dt.Rows)
+                {
+                    UserShecduleModel user = new UserShecduleModel()
+                    {
+                        NodeId = row["NodeId"].ToString(),
+                        ParentId = row["ParentId"].ToString(),
+                        GroupId = row["GroupID"].ToString(),
+                        NodeText = row["NodeText"].ToString(),
+                        Position = row["position"].ToString(),
+                    };
+                    result.Add(user);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail Execute 'GetAMByRoleAsync' method");
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<UserShecduleModel>> GetCOByRoleAsync(string subUserId)
+        {
+            try
+            {
+                List<UserShecduleModel> result = new();
+                DataTable dt = await _ado.ExecuteStoreAsync("T24_CO_UserID_By_Role", "@UserID~@AM", $"1~{subUserId}");
+                //DataTable dt = await _ado.ExecuteStoreAsync("T24_PM_By_Role_V2", "@UserID", $"{GlobalData.UserId}");
+                foreach (DataRow row in dt.Rows)
+                {
+                    UserShecduleModel user = new UserShecduleModel()
+                    {
+                        NodeId = row["NodeId"].ToString(),
+                        ParentId = row["ParentId"].ToString(),
+                        GroupId = row["GroupID"].ToString(),
+                        NodeText = row["NodeText"].ToString(),
+                    };
+                    result.Add(user);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail Execute 'GetCOByRoleAsync' method");
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async  Task<HolidayResponse> GetHolidayAsync(string coId)
+        {
+            var jObj = new HolidayResponse();
+            var enc = new Encryption();
+            try
+            {
+                var startDate = DateTime.Now.AddYears(-5).ToString("yyyy");
+                var endDate = DateTime.Now.AddYears(5).ToString("yyyy");
+                string jsonRS = "{\"UserOwnerID\":\"" + coId + "\",\"StartDate\":\"" + startDate + "\",\"EndDate\":\"" + endDate + "\"}";
+                String FakeSeed = enc.SeekKeyGet();
+                string jsonEncript = enc.Encrypt(jsonRS, FakeSeed);
+
+                string endpoin = AppCon.TabletWSUrl;
+                var client = new RestClient(endpoin + "/api/ScheduleTaskGetByWeb?api_name=abc&api_key=123&username=abc");
+                var request = new RestRequest("", Method.Post);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Basic YW1rOjEyMw==");
+                request.AddParameter("application/json", "\"" + jsonEncript + "\"", ParameterType.RequestBody);
+                RestResponse response = await client.ExecuteAsync(request);
+
+                string jres = response.Content!.ToString().Replace("\"", "");
+                string jresDec = enc.Decrypt(jres, FakeSeed).TrimEnd(']').TrimStart('[');
+
+                jObj = Newtonsoft.Json.JsonConvert.DeserializeObject<HolidayResponse>(jresDec);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return jObj;
+        }
+
+        public  async Task<HolidayResponse> GetPublicHolidayAsync()
+        {
+            var jObj = new HolidayResponse();
+            var enc = new Encryption();
+            try
+            {
+                var startDate = DateTime.Now.AddYears(-5).ToString("yyyy");
+                var endDate = DateTime.Now.AddYears(5).ToString("yyyy");
+                string jsonRS = "{\"FYear\":\"" + startDate + "\",\"TYear\":\"" + endDate + "\"}";
+                String FakeSeed = enc.SeekKeyGet();
+                string jsonEncript = enc.Encrypt(jsonRS, FakeSeed);
+
+                string endpoin = AppCon.TabletWSUrl;
+                var client = new RestClient(endpoin + "/api/HolidayGetByWeb?api_name=abc&api_key=123&username=abc");
+                var request = new RestRequest("",Method.Post);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddHeader("Authorization", "Basic YW1rOjEyMw==");
+                request.AddParameter("application/json", "\"" + jsonEncript + "\"", ParameterType.RequestBody);
+                RestResponse response =await client.ExecuteAsync(request);
+
+                string jres = response.Content!.ToString().Replace("\"", "");
+                string jresDec = enc.Decrypt(jres, FakeSeed).TrimEnd(']').TrimStart('[');
+
+                jObj = Newtonsoft.Json.JsonConvert.DeserializeObject<HolidayResponse>(jresDec);
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+            return  jObj;
+        }
+        #endregion
+
+
+
     }
 }
 

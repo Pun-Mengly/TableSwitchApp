@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Net.Http;
-using Newtonsoft.Json;
 
 namespace TableSwitchWebApplication.Data.ChatGPT
 {

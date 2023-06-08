@@ -13,6 +13,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.Extensions.Configuration;
 using TableSwitchWebApplication.HangFireTask;
+using TableSwitchWebApplication.Cores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,7 @@ builder.Services.AddScoped<ContextMenuService>();
 
 #region Depandancy Injection 
 builder.Services.AddScoped<IBusineseLogic, BusineseLogic>();
+builder.Services.AddScoped<IAdoOperation, AdoOperation>();
 #endregion
 
 #region Local Storage
@@ -124,8 +126,10 @@ if (!app.Environment.IsDevelopment())
 // Add Serilog request logging
 app.UseSerilogRequestLogging();
 
-//app.UseHangfireDashboard();
+
+#pragma warning disable CS0618 // Type or member is obsolete
 app.UseHangfireServer();
+#pragma warning restore CS0618 // Type or member is obsolete
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     DashboardTitle = "AMK Background Process",

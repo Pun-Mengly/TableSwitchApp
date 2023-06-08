@@ -6,8 +6,72 @@
 
 <TitlePageComponent Title="CO SCHEDULE"></TitlePageComponent>
 
-<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End"
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(1)">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start col-md-6 col-sm-6">
+        @if (PMShecduleModels is not null)
+        {
+            <div>
+            <label>PM:</label>
+            <br />
+            <div>
+                <RadzenDropDown TValue="UserShecduleModel" Data=@PMShecduleModels
+                            Change=@(args => OnChangePM(args))
+                            AllowFiltering=true
+                            Placeholder="Text.." />
+            </div>
+            </div>
+        }
+        @if (BMShecduleModels is not null)
+                {
+        <div>
+            <label>BM:</label>
+            <br />
+            <div>
+                <RadzenDropDown TValue="UserShecduleModel" Data=@BMShecduleModels
+                            Change=@(args => OnChangeBM(args))
+                            AllowFiltering=true
+                            Placeholder="Text.." />
+            </div>
+            </div>
+        }
+        @if (AMShecduleModels is not null)
+        {
+        <div>
+            <label>AM:</label>
+            <br />
+            <div>
+                <RadzenDropDown TValue="UserShecduleModel" Data=@AMShecduleModels
+                            Change=@(args => OnChangeAM(args))
+                            AllowFiltering=true
+                            Placeholder="Text.." />
+        </div>
+        </div>
+        }
+        @if (CoShecduleModels is not null)
+        {
+        <div>
+            <label>CO:</label>
+            <br />
+            <div>
+                <RadzenDropDown TValue="UserShecduleModel" Data=@CoShecduleModels
+                            Change=@(args => OnChangeCO(args))
+                            AllowFiltering=true
+                            Placeholder="Text.." />
+        </div>
+        </div>
+        }
+        <div>
+            <div></div>
+            <br />
+            <RadzenButton Variant="Variant.Outlined" Text="Search" Icon="autorenew" ButtonStyle="ButtonStyle.Primary"
+                          Click=@(args =>ShowBusyDialog(true)) />
+        </div>
+    </div>
+</Animate>
+
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 698px;" TItem="Appointment" Data=@Appointments StartProperty="Start" EndProperty="End"
                  TextProperty="Text" SelectedIndex="2"
+                 class="mt-4"
                  SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
     <RadzenDayView />
     <RadzenWeekView />
@@ -16,9 +80,9 @@
 </RadzenScheduler>
 <style>
    .animation{
-        animation-name: direction;
+       @* animation-name: direction;
         animation-duration: 0.5s;
-        animation-fill-mode: both;
+        animation-fill-mode: both;*@
    }
 
     @@keyframes direction {
@@ -35,17 +99,6 @@
     RadzenScheduler<Appointment>? scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
 
-    IList<Appointment> appointments = new List<Appointment>
-    {
-        new Appointment { Start = DateTime.Today.AddDays(-2), End = DateTime.Today.AddDays(-2), Text = "Birthday" },
-        new Appointment { Start = DateTime.Today.AddDays(-11), End = DateTime.Today.AddDays(-10), Text = "Day off" },
-        new Appointment { Start = DateTime.Today.AddDays(-10), End = DateTime.Today.AddDays(-8), Text = "Work from home" },
-        new Appointment { Start = DateTime.Today.AddHours(10), End = DateTime.Today.AddHours(12), Text = "Online meeting" },
-        new Appointment { Start = DateTime.Today.AddHours(10), End = DateTime.Today.AddHours(13), Text = "Skype call" },
-        new Appointment { Start = DateTime.Today.AddHours(14), End = DateTime.Today.AddHours(14).AddMinutes(30), Text = "Dentist appointment" },
-        new Appointment { Start = DateTime.Today.AddDays(1), End = DateTime.Today.AddDays(12), Text = "Vacation" },
-    };
-
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
         // Highlight today in month view
@@ -59,6 +112,7 @@
         {
             args.Attributes["style"] = "background: rgba(255,220,40,.2);";
         }
+        
     }
 
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
@@ -72,7 +126,7 @@
 
             if (data != null)
             {
-                appointments.Add(data);
+                Appointments.Add(data);
                 // Either call the Reload method or reassign the Data property of the Scheduler
                 await scheduler!.Reload();
             }
@@ -83,7 +137,7 @@
     {
         Console.WriteLine($"AppointmentSelect: Appointment={args.Data.Text}");
 
-        await DialogService.OpenAsync<EditAppointmentPage>("Edit Appointment", new Dictionary<string, object> { { "Appointment", args.Data }},
+        await DialogService.OpenAsync<EditAppointmentPage>("Public Holiday", new Dictionary<string, object> { { "Appointment", args.Data }},
         new DialogOptions()
             {
                 CssClass = "animation"
@@ -94,10 +148,62 @@
     void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Appointment> args)
     {
         // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
-
-        if (args.Data.Text == "Birthday")
+        foreach (var app in Appointments)
         {
-            args.Attributes["style"] = "background: red";
+            if (args.Data.Text == app.Text) //part public holiday
+            {
+                args.Attributes["style"] = "background: red";
+            }
         }
+        
     }
+    protected override async Task OnInitializedAsync()
+    {
+        //Holidays= await _logic!.GetPublicHolidayAsync();
+        //await _logic!.GetHolidayAsync("7040"); //Fixed User CO For Test
+        PMShecduleModels= await _logic!.GetPMByRoleAsync();
+    }
+    async Task ShowBusyDialog(bool withMessageAsString)
+    {
+        #pragma warning disable CS4014
+        InvokeAsync(async () =>
+        {
+            // Simulate background task
+            await Task.Run(() => OnSearchAsync());
+
+            // Close the dialog
+            DialogService.Close();
+            await scheduler!.Reload();
+
+        });
+
+        await BusyDialog("Loading, Please Wait...");
+
+    }
+    // Busy dialog from string
+    async Task BusyDialog(string message)
+    {
+        await DialogService.OpenAsync("", ds =>
+        {
+            RenderFragment content = b =>
+            {
+                b.OpenElement(0, "RadzenRow");
+
+                b.OpenElement(1, "RadzenColumn");
+                b.AddAttribute(2, "Size", "12");
+                b.AddContent(3, message);
+
+                b.CloseElement();
+                b.CloseElement();
+            };
+            return content;
+        }, new DialogOptions()
+            {
+                ShowTitle = false,
+                Style = "min-height:auto;min-width:auto;width:auto",
+                CloseDialogOnEsc = false,
+
+            });
+    }
+
 }
