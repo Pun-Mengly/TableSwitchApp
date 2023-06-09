@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using TableSwitchWebApplication.Data;
@@ -23,10 +26,16 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
         public InputModel Input { get; set; }
         public string? ReturnUrl { get; set; }
 
+        public SelectList Role { get; set; }
+        [BindProperty]
+        public string SelectedRoleName { get; set; } //This field
+
         public void OnGet()
         {
             ReturnUrl = Url.Content("~/");
-            
+            var roles= _roleManager.Roles.ToList();
+            Role = new SelectList(roles, nameof(IdentityRole.Name), nameof(IdentityRole.Name));
+
         }
         public async Task<IActionResult> OnPostAsync()
         {
@@ -37,9 +46,9 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
 
                 var identity = new ApplicationUser { UserName = Input.UserName, Email = Input.UserName+"@amkcambodia.com",UserID= (maxUserId++).ToString()};
                 var result = await _userManager.CreateAsync(identity, "Amk@123");
-                var role = new IdentityRole(Input.Role);
-                var addRoleResult = await _roleManager.CreateAsync(role);
-                var addUserRoleResult=await _userManager.AddToRoleAsync(identity,Input.Role);
+                //var role = new IdentityRole(Input.Role);
+                //var addRoleResult = await _roleManager.CreateAsync(role);
+                var addUserRoleResult=await _userManager.AddToRoleAsync(identity, SelectedRoleName);
                 if (result.Succeeded && addUserRoleResult.Succeeded)
                 {
                     await _signInManager.SignInAsync(identity, isPersistent: false);
@@ -54,8 +63,8 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
             public string? UserName { get; set; }
             //[Required]
             //[DataType(DataType.Password)] public string? Password { get; set; }
-            [Required]
-            public string? Role { get; set; } 
+            //[Required]
+            //public string? Role { get; set; } 
         }
     }
 }

@@ -6,12 +6,11 @@
         <div class="form-group">
             <input type="text" class="form-control" id="username" asp-for="Input.UserName" placeholder="Username">
             <span asp-validation-for="Input.UserName" class="text-danger"></span>
-
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="role" asp-for="Input.Role" placeholder="Role">
-            <span asp-validation-for="Input.Role" class="text-danger"></span>
-
+            <select class="form-control" asp-for="SelectedRoleName" asp-items="Model.Role" required>
+                <option value="" disabled selected hidden>Select Role</option>
+            </select>
         </div>
         <button id="login-submit" type="submit" class="btn">Register</button>
     </form>
@@ -75,5 +74,8 @@
             background-color: #5B0B3D;
         }
 
+    select:invalid {
+        color: gray;
+    }
 </style>
 
