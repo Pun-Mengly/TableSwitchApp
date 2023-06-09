@@ -15,7 +15,7 @@ namespace TabSwitchUnitTestApplication
         {
             try 
             {
-                var result=await AdoOperation.ReturnDT1("SELECT 1");
+                var result=await AdoOperation.ReturnDT1NullableObj("SELECT 1");
                 var data = result.Rows.Count;
                 Assert.That(data, Is.EqualTo(1), "DB Was not Connected");
             }

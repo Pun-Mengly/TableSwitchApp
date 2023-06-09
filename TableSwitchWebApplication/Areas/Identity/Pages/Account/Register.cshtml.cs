@@ -33,15 +33,18 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
             ReturnUrl = Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var identity = new ApplicationUser { UserName = Input.Email, Email = Input.Email};
-                var result = await _userManager.CreateAsync(identity, Input.Password);
+                //string maxUserId=_userManager!.Users!.Max(e => e.UserID)!;
+                var maxUserId = _userManager!.Users!.Select(c => Convert.ToInt32(c.UserID)).Max();
+
+                var identity = new ApplicationUser { UserName = Input.UserName, Email = Input.UserName+"@amkcambodia.com",UserID= (maxUserId++).ToString()};
+                var result = await _userManager.CreateAsync(identity, "Amk@123");
                 var role = new IdentityRole(Input.Role);
                 var addRoleResult = await _roleManager.CreateAsync(role);
                 var addUserRoleResult=await _userManager.AddToRoleAsync(identity,Input.Role);
                 if (result.Succeeded && addUserRoleResult.Succeeded)
                 {
                     await _signInManager.SignInAsync(identity, isPersistent: false);
-                    return LocalRedirect(ReturnUrl);
+                    return Redirect("Login");
                 }
             }
             return Page();
@@ -49,9 +52,9 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress] public string? Email { get; set; }
-            [Required]
-            [DataType(DataType.Password)] public string? Password { get; set; }
+            public string? UserName { get; set; }
+            //[Required]
+            //[DataType(DataType.Password)] public string? Password { get; set; }
             [Required]
             public string? Role { get; set; } 
         }

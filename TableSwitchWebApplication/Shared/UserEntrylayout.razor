@@ -14,7 +14,7 @@
 
 <div class="container-fluid pt-3">
     <TitlePageComponent Title="Users Entry"></TitlePageComponent>
-    <RadzenButton Text="User Entry" Click="@UserEntry" Style="float:right"></RadzenButton>
+    <RadzenButton Text="User Entry" Click="@UserEntrys" Style="float:right"></RadzenButton>
 
 </div>
     <RadzenButton Text="Chat GPT" Click="@Message" Style="float:right"></RadzenButton>
@@ -24,13 +24,13 @@
     const string passsword = "Amk@123"; // Fix Password
     protected override async Task OnInitializedAsync()
     {
-        Users = await _logic!.GetADUsersAsync();
 
     }
-    private async Task UserEntry()
+    private async Task UserEntrys()
     {
         try
         {
+            Users = await _logic!.GetADUsersAsync();
             foreach (var user in Users!)
             {
                 var role = new IdentityRole(user.GroupName);

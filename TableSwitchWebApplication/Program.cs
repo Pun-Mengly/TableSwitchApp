@@ -11,7 +11,6 @@ using TableSwitchWebApplication.Helper;
 using Serilog.Extensions.Hosting;
 using Hangfire;
 using Hangfire.SqlServer;
-using Microsoft.Extensions.Configuration;
 using TableSwitchWebApplication.HangFireTask;
 using TableSwitchWebApplication.Cores;
 
