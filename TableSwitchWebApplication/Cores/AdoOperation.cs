@@ -118,5 +118,42 @@ namespace TableSwitchWebApplication.Cores
             }
             return dts;
         }
+
+
+        // Usage: Obj was nullable 
+        public static async Task<DataTable> ReturnDT1NullableObj(string sql) //copy from old "ReturnDT1"
+        {
+            Log.Information($"SQL Script: '{sql}'"); //New Log
+            SqlConnection con = new();
+            SqlDataAdapter da = new();
+            DataTable dt = new();
+            SqlCommand cmd = new();
+            try
+            {
+                dt = new DataTable();
+                con = new SqlConnection(AppCon.ConStr);
+                await con.OpenAsync();
+
+                cmd = new SqlCommand(sql, con);
+                cmd.CommandType = CommandType.Text;
+                da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                //AddLog3("0", sql + " | " + ex.Message.ToString(), "ReturnDT1");
+                Log.Error($"{ex.Message}"); //New Log
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                await con.CloseAsync();
+                await con.DisposeAsync();
+                await cmd.DisposeAsync();
+                da.Dispose();
+            }
+            return dt;
+
+        }
     }
 }

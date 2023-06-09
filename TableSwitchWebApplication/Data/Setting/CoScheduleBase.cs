@@ -15,6 +15,7 @@ namespace TableSwitchWebApplication.Data.Setting
         public IEnumerable<UserShecduleModel>? BMShecduleModels { get; set; }
         public IEnumerable<UserShecduleModel>? AMShecduleModels { get; set; }
         public IEnumerable<UserShecduleModel>? CoShecduleModels { get; set; }
+        public UserShecduleModel? CoShecdule { get; set; }
         public HolidayResponse? Holidays { get; set; }
         public List<Appointment>? Appointments { get; set; } = new();
 
@@ -42,7 +43,8 @@ namespace TableSwitchWebApplication.Data.Setting
         }
         protected void OnChangeCO(object co)
         {
-
+            UserShecduleModel user = (UserShecduleModel)co;
+            CoShecdule = user;
         }
         protected async Task OnSearchAsync()
         {
@@ -62,7 +64,7 @@ namespace TableSwitchWebApplication.Data.Setting
             //    Appointments!.Add(apm);
             //}
 
-            Appointments= await _logic!.GetHolidayAsync("7040") as List<Appointment>; //Fixed User CO For Test
+            Appointments= await _logic!.GetHolidayAsync(CoShecdule==null?"": CoShecdule.NodeId!) as List<Appointment>; //Fixed User CO For Test
 
         }
 

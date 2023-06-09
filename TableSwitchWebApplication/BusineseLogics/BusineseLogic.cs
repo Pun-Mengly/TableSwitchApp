@@ -404,7 +404,7 @@ namespace TableSwitchWebApplication.BusineseLogics
             {
                 var result = new List<AuthHangFireFilterModel>();
                 string sql = $"EXEC AuthHangFireFilter @UserAD = '{UserAD}'";
-                var dt = await _ado.ReturnDT1(sql);
+                var dt = await AdoOperation.ReturnDT1NullableObj(sql);
                 foreach (DataRow row in dt.Rows)
                 {
                     var loginADUser = new AuthHangFireFilterModel()

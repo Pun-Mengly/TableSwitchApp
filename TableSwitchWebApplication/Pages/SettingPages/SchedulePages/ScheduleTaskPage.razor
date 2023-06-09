@@ -1,0 +1,97 @@
+﻿@using TableSwitchWebApplication.Models.Settings.Schedule;
+@inject DialogService DialogService
+
+<RadzenTemplateForm TItem="Appointment" Data="@model">
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Title" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.Title" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Description" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.Description" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Plan Start" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker @bind-Value="@model.PlanDateStart" Name="Start" ShowTime="true" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Plan End" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker Name="Plan End" @bind-Value="@model.PlanDateEnd" ShowTime="true" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Actual Start" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker @bind-Value="@model.ActualDateStart" Name="ActualDateStart" ShowTime="true" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Actual End" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker Name="ActualDateEnd" @bind-Value="@model.ActualDateEnd" ShowTime="true" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Owner" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.OwnerUserText" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Task Type" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.TaskTypeId" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Task Status" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.TaskTypeStatusId" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 16px">
+        <div class="col-md-3">
+            <RadzenLabel Text="Remark" />
+        </div>
+        <div class="col">
+            <RadzenTextArea @bind-Value="@model.Remark" Name="Text" Disabled Style="width:100%" />
+        </div>
+    </div>
+    </RadzenTemplateForm>
+    @code {
+    [Parameter]
+    public Appointment? Appointment { get; set; }
+
+    Appointment model = new Appointment();
+
+    protected override void OnParametersSet()
+    {
+        model = Appointment!;
+    }
+
+}
