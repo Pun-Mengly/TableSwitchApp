@@ -33,7 +33,6 @@ namespace TableSwitchWebApplication.Areas.Identity.Pages.Account
             ReturnUrl = Url.Content("~/");
             if (ModelState.IsValid)
             {
-                //string maxUserId=_userManager!.Users!.Max(e => e.UserID)!;
                 var maxUserId = _userManager!.Users!.Select(c => Convert.ToInt32(c.UserID)).Max();
 
                 var identity = new ApplicationUser { UserName = Input.UserName, Email = Input.UserName+"@amkcambodia.com",UserID= (maxUserId++).ToString()};
